@@ -172,16 +172,16 @@ EGA.estimate <- function(data, n = NULL,
       cor.data <- as.matrix(Matrix::nearPD(data, corr = TRUE, keepDiag = TRUE, ensureSymmetry = TRUE)$mat)
     }else{cor.data <- data}
   }
-  
+
   #### ADDITIONAL ARGUMENTS HANDLING ####
-  
+
   # Get additional arguments
   ## Objects
   args <- list(...)
-  
+
   # Function assigned arguments
   args$data <- cor.data
-  
+
   #### ADDITIONAL ARGUMENTS HANDLING ####
 
   # Estimate network
@@ -191,26 +191,28 @@ EGA.estimate <- function(data, n = NULL,
     ## Function assigned
     args$n <- n
     args$returnAllResults <- FALSE
-    
+
     ## Optional arguments
     if(!"lambda.min.ratio" %in% names(args))
     {args$lambda.min.ratio <- 0.1}
-    
+
     if(!"gamma" %in% names(args))
     {gamma.values <- c(0.50, 0.25, 0)
     }else{gamma.values <- args$gamma}
-    
+
     for(j in 1:length(gamma.values))
     {
       # Re-instate gamma values
       args$gamma <- gamma.values[j]
-      
+
       # Estimate network
       estimated.network <- do.call(EBICglasso.qgraph, args)
 
       if(all(NetworkToolbox::strength(estimated.network)>0))
       {
-        message(paste("Network estimated with:\n",
+
+        verbatim <- TRUE
+        if(!verbatim) message(paste("Network estimated with:\n",
                       " \u2022 gamma = ", gamma.values[j], "\n",
                       " \u2022 lambda.min.ratio = ", args$lambda.min.ratio,
                       sep=""))
